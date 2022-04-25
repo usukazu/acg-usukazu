@@ -1,4 +1,5 @@
 #include <cstdio>
+#include <stdio.h>
 #include <cstdlib>
 #define GL_SILENCE_DEPRECATION
 #include <GLFW/glfw3.h>
@@ -17,13 +18,28 @@ Eigen::Matrix<double,4,4,Eigen::RowMajor> GetHomographicTransformation(
       {+0.5,-0.5},
       {+0.5,+0.5},
       {-0.5,+0.5} };
+  Eigen::Matrix<double,8,8,Eigen::RowMajor> A;
+  A << 
+      c0[0][0], c0[0][1], 1, 0, 0, 0,  -c0[0][0]*c1[0][0], -c0[0][1]*c1[0][0],
+      0, 0, 0,  c0[0][0], c0[0][1], 1, -c0[0][0]*c1[0][1], -c0[0][1]*c1[0][1],
+      c0[1][0], c0[1][1], 1, 0, 0, 0,  -c0[1][0]*c1[1][0], -c0[1][1]*c1[1][0],
+      0, 0, 0,  c0[1][0], c0[1][1], 1, -c0[1][0]*c1[1][1], -c0[1][1]*c1[1][1],
+      c0[2][0], c0[2][1], 1, 0, 0, 0,  -c0[2][0]*c1[2][0], -c0[2][1]*c1[2][0],
+      0, 0, 0,  c0[2][0], c0[2][1], 1, -c0[2][0]*c1[2][1], -c0[2][1]*c1[2][1],
+      c0[3][0], c0[3][1], 1, 0, 0, 0,  -c0[3][0]*c1[3][0], -c0[3][1]*c1[3][0],
+      0, 0, 0,  c0[3][0], c0[3][1], 1, -c0[3][0]*c1[3][1], -c0[3][1]*c1[3][1];
+  Eigen::Matrix<double,8,1> xy;
+  xy <<
+    c1[0][0],c1[0][1],c1[1][0],c1[1][1],c1[2][0],c1[2][1],c1[3][0],c1[3][1];
+  Eigen::Matrix<double,8,1> h;
+  h = A.inverse()*xy;
   Eigen::Matrix<double,4,4,Eigen::RowMajor> m;
   // set identity as default
     m <<
-      1, 0, 0, 0,
-      0, 1, 0, 0,
+      h[0], h[1], 0, h[2],
+      h[3], h[4], 0, h[5],
       0, 0, 1, 0,
-      0, 0, 0, 1;
+      h[6], h[7], 0, 1;
   // write some code to compute the 4x4 Homographic transformation matrix `m`;
   // `m` should transfer :
   // (c0[0][0],c0[][1],z) -> (c1[0][0],c1[0][1],z)
