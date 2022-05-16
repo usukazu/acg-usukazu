@@ -48,11 +48,16 @@ double SamplingHemisphere(
   // hint3: for longitude use inverse sampling method to achieve cosine weighted sample.
   // hint4: first assume z is the up in the polar coordinate, then rotate the sampled direction such that "z" will be up.
   // write some codes below (5-10 lines)
-
+    const auto theta = asin(sqrt(dfm2::MyERand48<double>(Xi)));  // you can sample uniform distribution [0,1] with this function
+    const auto phi = 2*M_PI*dfm2::MyERand48<double>(Xi);
+    dir[0] = sin(theta)*cos(phi); // dir[0] -> [-1,+1]
+    dir[1] = sin(theta)*sin(phi);
+    dir[2] = cos(theta);
+    return 1;
 
   // below: naive implementation to "uniformly" sample hemisphere using "rejection sampling"
   // to not be used for the "problem2" in the assignment
-  for(int i=0;i<10;++i) { // 10 is a magic number
+  /*for(int i=0;i<10;++i) { // 10 is a magic number
     const auto d0 = dfm2::MyERand48<double>(Xi);  // you can sample uniform distribution [0,1] with this function
     const auto d1 = dfm2::MyERand48<double>(Xi);
     const auto d2 = dfm2::MyERand48<double>(Xi);
@@ -70,7 +75,7 @@ double SamplingHemisphere(
     if( cos < 0 ){ continue; }
     return cos*2;  // (coefficient=1/M_PI) * (area_of_hemisphere=M_PI*2) = 2
   }
-  return 0;
+  return 0;*/
 }
 
 double SampleAmbientOcclusion(
