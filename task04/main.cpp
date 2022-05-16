@@ -50,9 +50,18 @@ double SamplingHemisphere(
   // write some codes below (5-10 lines)
     const auto theta = asin(sqrt(dfm2::MyERand48<double>(Xi)));  // you can sample uniform distribution [0,1] with this function
     const auto phi = 2*M_PI*dfm2::MyERand48<double>(Xi);
-    dir[0] = sin(theta)*cos(phi); // dir[0] -> [-1,+1]
-    dir[1] = sin(theta)*sin(phi);
-    dir[2] = cos(theta);
+    const auto ntheta = acos(nrm[2]);
+    const auto nphi = y/abs(y)*acos(nrm[0]/sqrt(nrm[0]*nrm[0]+nrm[1]*nrm[1]));
+    double x1 = sin(theta)*cos(phi); // dir[0] -> [-1,+1]
+    double y1 = sin(theta)*sin(phi);
+    double z1 = cos(theta);
+    double x2 = cos(ntheta)*x1+sin(ntheta)*z1;
+    double y2 = y1;
+    double z2 = -sin(ntheta)*x1+cos(ntheta)*z1;
+    dir[0]=cos(nphi)*x2-sin(nphi)*y2;
+    dir[1]=sin(nphi)*x2+cos(nphi)*y2;
+    dir[2]=z2;
+
     return 1;
 
   // below: naive implementation to "uniformly" sample hemisphere using "rejection sampling"
